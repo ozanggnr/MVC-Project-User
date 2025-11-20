@@ -1,49 +1,106 @@
-﻿<!DOCTYPE html>
+﻿@{
+    @inject IConfiguration configuration
+    // This injects the IConfiguration service directly into the view making configuration settings (appsettings.json)
+    // accessible without controller dependencies. IConfiguration service may also be injected to the controllers.
+    // configuration is the local variable name that will be used in this view such as to reach the Title section
+    // of appsettings.json, configuration["Title"] will be used as below.
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MVC</title>
+
+    @* Set in views to show the title string values *@
+    <title>@ViewData["Title"] - @configuration["Title"]</title>
+    @* Changed from @ViewData["Title"] - Products MVC to use Title in appsettings.json *@
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
+
+        @* Bootstrap Navbar: top menu *@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+
+            @* 
+            Bootstrap container-fluid class is used for a responsive full-width (without any padding from left and right) div.
+            Bootstrap container class is used for a responsive fixed-width (with some padding from left and right) div.
+            *@
+
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MVC</a>
+
+                @* 
+                Tag Helper: Tag Helpers enable server-side code to participate in creating and rendering HTML elements in Razor views. 
+                They look like standard HTML tags but add special attributes such as asp-controller, asp-action, asp-area, asp-route, 
+                asp-for, etc. that are processed on the server to generate dynamic content. 
+                Will create the HTML link <a href="/Home/Index" class="navbar-brand">Products MVC</a> 
+                *@
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@configuration["Title"]</a>
+                @* Changed from <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Products MVC</a>
+                    to use Title in appsettings.json *@
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
+
+                        @* Links for the application: *@
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Groups" asp-action="Index">Groups</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Countries" asp-action="Index">Countries</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
+                        </li>
+
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+
+    @* class changed from container to container-fluid to use full-width for the views *@
+    <div class="container-fluid">
+
         <main role="main" class="pb-3">
+
+            @* Renders the views' content returned by controllers' actions *@
             @RenderBody()
+
         </main>
     </div>
-
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+        @* class changed from container to container-fluid to use full-width for the footer *@
+        <div class="container-fluid">
+
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* 
+    Renders the optional Scripts section in the views which contains extra Javascript or jQuery codes, 
+    generally for using third-party Javascript-CSS client side libraries. 
+    Since the required parmeter is false, there must not be a Scripts secion in every view.
+    *@
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

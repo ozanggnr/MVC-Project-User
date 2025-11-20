@@ -7,25 +7,28 @@ using APP.Models;
 
 namespace MVC.Controllers
 {
-    public class GroupsController : Controller
+    public class UsersController : Controller
     {
         // Service injections:
+        private readonly IService<UserRequest, UserResponse> _userService;
+        private readonly IService<CityRequest, CityResponse> _cityService;
+        private readonly IService<CountryRequest, CountryResponse> _countryService;
         private readonly IService<GroupRequest, GroupResponse> _groupService;
+        private readonly IService<RoleRequest, RoleResponse> _roleService;
 
-        /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-        //private readonly IService<EntityRequest, EntityResponse> _EntityService;
-
-        public GroupsController(
-			IService<GroupRequest, GroupResponse> groupService
-
-            /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-            //, IService<EntityRequest, EntityResponse> EntityService
+        public UsersController(
+			IService<UserRequest, UserResponse> userService
+            , IService<CityRequest, CityResponse> cityService
+            , IService<CountryRequest, CountryResponse> countryService
+            , IService<GroupRequest, GroupResponse> groupService
+            , IService<RoleRequest, RoleResponse> roleService
         )
         {
+            _userService = userService;
+            _cityService = cityService;
+            _countryService = countryService;
             _groupService = groupService;
-
-            /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-            //_EntityService = EntityService;
+            _roleService = roleService;
         }
 
         private void SetViewData()
@@ -36,9 +39,15 @@ namespace MVC.Controllers
             */
 
             // Related items service logic to set ViewData (Id and Name parameters may need to be changed in the SelectList constructor according to the model):
-            
-            /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-            //ViewBag.EntityIds = new MultiSelectList(_EntityService.List(), "Id", "Name");
+            var cities = _cityService.List() ?? new List<CityResponse>();
+            var countries = _countryService.List() ?? new List<CountryResponse>();
+            var groups = _groupService.List() ?? new List<GroupResponse>();
+            var roles = _roleService.List() ?? new List<RoleResponse>();
+
+            ViewData["CityId"] = new SelectList(cities, "Id", "CityName");
+            ViewData["CountryId"] = new SelectList(countries, "Id", "CountryName");
+            ViewData["GroupId"] = new SelectList(groups, "Id", "Title");
+            ViewBag.RoleIds = new MultiSelectList(roles, "Id", "Name");
         }
 
         private void SetTempData(string message, string key = "Message")
@@ -50,37 +59,37 @@ namespace MVC.Controllers
             TempData[key] = message;
         }
 
-        // GET: Groups
+        // GET: Users
         public IActionResult Index()
         {
             // Get collection service logic:
-            var list = _groupService.List();
+            var list = _userService.List();
             return View(list); // return response collection as model to the Index view
         }
 
-        // GET: Groups/Details/5
+        // GET: Users/Details/5
         public IActionResult Details(int id)
         {
             // Get item service logic:
-            var item = _groupService.Item(id);
+            var item = _userService.Item(id);
             return View(item); // return response item as model to the Details view
         }
 
-        // GET: Groups/Create
+        // GET: Users/Create
         public IActionResult Create()
         {
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
             return View(); // return Create view with no model
         }
 
-        // POST: Groups/Create
+        // POST: Users/Create
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Create(GroupRequest @group)
+        public IActionResult Create(UserRequest user)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
             {
                 // Insert item service logic:
-                var response = _groupService.Create(@group);
+                var response = _userService.Create(user);
                 if (response.IsSuccessful)
                 {
                     SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
@@ -89,26 +98,26 @@ namespace MVC.Controllers
                 ModelState.AddModelError("", response.Message); // to display service error message in the validation summary of the view
             }
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(@group); // return request as model to the Create view
+            return View(user); // return request as model to the Create view
         }
 
-        // GET: Groups/Edit/5
+        // GET: Users/Edit/5
         public IActionResult Edit(int id)
         {
             // Get item to edit service logic:
-            var item = _groupService.Edit(id);
+            var item = _userService.Edit(id);
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
             return View(item); // return request as model to the Edit view
         }
 
-        // POST: Groups/Edit
+        // POST: Users/Edit
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Edit(GroupRequest @group)
+        public IActionResult Edit(UserRequest user)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
             {
                 // Update item service logic:
-                var response = _groupService.Update(@group);
+                var response = _userService.Update(user);
                 if (response.IsSuccessful)
                 {
                     SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
@@ -117,23 +126,23 @@ namespace MVC.Controllers
                 ModelState.AddModelError("", response.Message); // to display service error message in the validation summary of the view
             }
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(@group); // return request as model to the Edit view
+            return View(user); // return request as model to the Edit view
         }
 
-        // GET: Groups/Delete/5
+        // GET: Users/Delete/5
         public IActionResult Delete(int id)
         {
             // Get item to delete service logic:
-            var item = _groupService.Item(id);
+            var item = _userService.Item(id);
             return View(item); // return response item as model to the Delete view
         }
 
-        // POST: Groups/Delete
+        // POST: Users/Delete
         [HttpPost, ValidateAntiForgeryToken, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
             // Delete item service logic:
-            var response = _groupService.Delete(id);
+            var response = _userService.Delete(id);
             SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
             return RedirectToAction(nameof(Index)); // redirect to the Index action
         }

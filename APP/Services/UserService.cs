@@ -13,19 +13,19 @@ namespace APP.Services
         /// Service interface for cookie authentication including sign in and sign out methods.
         /// The injected instance in the constructor is assigned to this field to be used in Login and Logout methods below.
         /// </summary>
-        private readonly ICookieAuthService _cookieAuthService;
+        private readonly ICookieAuthService? _cookieAuthService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
-        /// Uses dependency injection to receive the database context and cookie authentication service.
+        /// Uses dependency injection to receive the database context and optional cookie authentication service.
         /// </summary>
         /// <param name="db">
         /// The <see cref="DbContext"/> instance used for database operations, which the injection is managed in the IoC Container of Program.cs.
         /// </param>
         /// <param name="cookieAuthService">
-        /// The <see cref="ICookieAuthService"/> instance used for cookie authentication, which the injection is managed in the IoC Container of Program.cs.
+        /// The optional <see cref="ICookieAuthService"/> instance used for cookie authentication, which the injection is managed in the IoC Container of Program.cs.
         /// </param>
-        public UserService(DbContext db, ICookieAuthService cookieAuthService) : base(db)
+        public UserService(DbContext db, ICookieAuthService? cookieAuthService = null) : base(db)
         {
             // The injected cookie authentication service is assigned to this field to be used in Login and Logout methods below.
             _cookieAuthService = cookieAuthService;
@@ -214,7 +214,9 @@ namespace APP.Services
         /// </returns>
         public async Task<CommandResponse> Login(UserLoginRequest request)
         {
-           
+            if (_cookieAuthService is null)
+                return Error("Authentication service is not available!");
+
             var entity = Query().SingleOrDefault(
                 u => u.UserName == request.UserName
                   && u.Password == request.Password
@@ -242,7 +244,8 @@ namespace APP.Services
         public async Task Logout()
         {
             // Perform sign out using the cookie authentication service.
-            await _cookieAuthService.SignOut();
+            if (_cookieAuthService is not null)
+                await _cookieAuthService.SignOut();
         }
 
         /// <summary>

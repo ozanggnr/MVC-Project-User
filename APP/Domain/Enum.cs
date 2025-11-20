@@ -8,7 +8,7 @@ namespace APP.Domain
 {
     public enum Genders
     {
-        Female = 1,
-        Male = 2
+        Woman = 1,
+        Man = 2
     }
 }

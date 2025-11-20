@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#nullable disable
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CORE.APP.Services;
 using APP.Models;
@@ -7,22 +8,22 @@ using APP.Models;
 
 namespace MVC.Controllers
 {
-    public class GroupsController : Controller
+    public class CountriesController : Controller
     {
         // Service injections:
-        private readonly IService<GroupRequest, GroupResponse> _groupService;
+        private readonly IService<CountryRequest, CountryResponse> _countryService;
 
         /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
         //private readonly IService<EntityRequest, EntityResponse> _EntityService;
 
-        public GroupsController(
-			IService<GroupRequest, GroupResponse> groupService
+        public CountriesController(
+			IService<CountryRequest, CountryResponse> countryService
 
             /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
             //, IService<EntityRequest, EntityResponse> EntityService
         )
         {
-            _groupService = groupService;
+            _countryService = countryService;
 
             /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
             //_EntityService = EntityService;
@@ -50,37 +51,37 @@ namespace MVC.Controllers
             TempData[key] = message;
         }
 
-        // GET: Groups
+        // GET: Countries
         public IActionResult Index()
         {
             // Get collection service logic:
-            var list = _groupService.List();
+            var list = _countryService.List();
             return View(list); // return response collection as model to the Index view
         }
 
-        // GET: Groups/Details/5
+        // GET: Countries/Details/5
         public IActionResult Details(int id)
         {
             // Get item service logic:
-            var item = _groupService.Item(id);
+            var item = _countryService.Item(id);
             return View(item); // return response item as model to the Details view
         }
 
-        // GET: Groups/Create
+        // GET: Countries/Create
         public IActionResult Create()
         {
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
             return View(); // return Create view with no model
         }
 
-        // POST: Groups/Create
+        // POST: Countries/Create
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Create(GroupRequest @group)
+        public IActionResult Create(CountryRequest country)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
             {
                 // Insert item service logic:
-                var response = _groupService.Create(@group);
+                var response = _countryService.Create(country);
                 if (response.IsSuccessful)
                 {
                     SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
@@ -89,26 +90,26 @@ namespace MVC.Controllers
                 ModelState.AddModelError("", response.Message); // to display service error message in the validation summary of the view
             }
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(@group); // return request as model to the Create view
+            return View(country); // return request as model to the Create view
         }
 
-        // GET: Groups/Edit/5
+        // GET: Countries/Edit/5
         public IActionResult Edit(int id)
         {
             // Get item to edit service logic:
-            var item = _groupService.Edit(id);
+            var item = _countryService.Edit(id);
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
             return View(item); // return request as model to the Edit view
         }
 
-        // POST: Groups/Edit
+        // POST: Countries/Edit
         [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Edit(GroupRequest @group)
+        public IActionResult Edit(CountryRequest country)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
             {
                 // Update item service logic:
-                var response = _groupService.Update(@group);
+                var response = _countryService.Update(country);
                 if (response.IsSuccessful)
                 {
                     SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
@@ -117,23 +118,23 @@ namespace MVC.Controllers
                 ModelState.AddModelError("", response.Message); // to display service error message in the validation summary of the view
             }
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(@group); // return request as model to the Edit view
+            return View(country); // return request as model to the Edit view
         }
 
-        // GET: Groups/Delete/5
+        // GET: Countries/Delete/5
         public IActionResult Delete(int id)
         {
             // Get item to delete service logic:
-            var item = _groupService.Item(id);
+            var item = _countryService.Item(id);
             return View(item); // return response item as model to the Delete view
         }
 
-        // POST: Groups/Delete
+        // POST: Countries/Delete
         [HttpPost, ValidateAntiForgeryToken, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
             // Delete item service logic:
-            var response = _groupService.Delete(id);
+            var response = _countryService.Delete(id);
             SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
             return RedirectToAction(nameof(Index)); // redirect to the Index action
         }

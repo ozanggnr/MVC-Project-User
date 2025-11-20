@@ -1,34 +1,22 @@
-﻿#nullable disable
-using APP.Models;
-using CORE.APP.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using CORE.APP.Services;
+using APP.Models;
 
 // Generated from Custom MVC Template.
 
 namespace MVC.Controllers
 {
-    [Authorize(Roles = "Admin")] // Only authenticated users with role Admin can execute all of the actions of this controller.
     public class RolesController : Controller
     {
         // Service injections:
         private readonly IService<RoleRequest, RoleResponse> _roleService;
 
-        /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-        //private readonly IService<EntityRequest, EntityResponse> _EntityService;
-
         public RolesController(
-            IService<RoleRequest, RoleResponse> roleService
-
-        /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-        //, IService<EntityRequest, EntityResponse> EntityService
+			IService<RoleRequest, RoleResponse> roleService
         )
         {
             _roleService = roleService;
-
-            /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-            //_EntityService = EntityService;
         }
 
         private void SetViewData()
@@ -37,11 +25,6 @@ namespace MVC.Controllers
             ViewBag and ViewData are the same collection (dictionary).
             They carry extra data other than the model from a controller action to its view, or between views.
             */
-
-            // Related items service logic to set ViewData (Id and Name parameters may need to be changed in the SelectList constructor according to the model):
-
-            /* Can be uncommented and used for many to many relationships, "entity" may be replaced with the related entity name in the controller and views. */
-            //ViewBag.EntityIds = new MultiSelectList(_EntityService.List(), "Id", "Name");
         }
 
         private void SetTempData(string message, string key = "Message")
@@ -142,3 +125,4 @@ namespace MVC.Controllers
         }
     }
 }
+

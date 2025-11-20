@@ -1,12 +1,10 @@
 ﻿using CORE.APP.Models;
-using CORE.APP.Models.Files;
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace APP.Models
 {
-    public class CityRequest : Request, IFileRequest
+    public class CityRequest : Request
     {
         [Required, StringLength(175)]
         [DisplayName("Name")]
@@ -15,8 +13,5 @@ namespace APP.Models
         [Required]
         [DisplayName("Country")]
         public int? CountryId { get; set; }
-
-        [DisplayName("Image")]
-        public IFormFile FormFile { get; set; } 
     }
 }
