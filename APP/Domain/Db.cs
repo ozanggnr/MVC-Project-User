@@ -1,47 +1,120 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace APP.Domain
 {
+   
     public class Db : DbContext
     {
+       
+
+
+
+
+
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<City> Cities { get; set; }
+
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Db"/> class using the specified options.
+        /// </summary>
+        /// <param name="options">
+        /// The options to be used by the <see cref="DbContext"/>, such as the database provider and connection string (from appsettings.json).
+        /// </param>
         public Db(DbContextOptions options) : base(options)
         {
         }
 
-       
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }      
-        public DbSet<Group> Groups { get; set; }     
-        public DbSet<UserRole> UserRoles { get; set; } 
 
-       
+
+        // Overriding OnModelCreating method is optional.
+        /// <summary>
+        /// Configures the entity relationships and database schema rules for the application domain.
+        /// This method defines how entities are related, sets up foreign key constraints, and customizes
+        /// the delete behavior for each relationship to prevent cascading deletes.
+        /// </summary>
+        /// <param name="modelBuilder">
+        /// The <see cref="ModelBuilder"/> used to configure entity mappings and relationships.
+        /// </param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Index configurations:
+            // Defining unique indices to enforce uniqueness constraints on certain properties.
+            // CountryName data of the Conutries table can not have multiple same values.
+            modelBuilder.Entity<Country>().HasIndex(countryEntity => countryEntity.CountryName).IsUnique();
+
+            // CityName data of the Cities table can not have multiple same values.
+            modelBuilder.Entity<City>().HasIndex(cityEntity => cityEntity.CityName).IsUnique();
+
+            // Title data of the Groups table can not have multiple same values.
+            modelBuilder.Entity<Group>().HasIndex(groupEntity => groupEntity.Title).IsUnique();
+
+            // Name data of the Roles table can not have multiple same values.
+            modelBuilder.Entity<Role>().HasIndex(roleEntity => roleEntity.Name).IsUnique();
+
+            // UserName data of the Users table can not have multiple same values.
+            modelBuilder.Entity<User>().HasIndex(userEntity => userEntity.UserName).IsUnique();
+
+            // Defining indices for optimizing query performance on frequently searched properties.
+            modelBuilder.Entity<User>().HasIndex(userEntity => userEntity.CountryId);
+            modelBuilder.Entity<User>().HasIndex(userEntity => userEntity.CityId);
+
+            // Composite index on FirstName and LastName for optimizing searches involving both fields.
+            modelBuilder.Entity<User>().HasIndex(userEntity => new { userEntity.FirstName, userEntity.LastName });
+
+
+
+            // Relationship configurations:
+            // Configuration should start with the entities that have the foreign keys.
+            modelBuilder.Entity<City>()
+                .HasOne(cityEntity => cityEntity.Country) // each City entity has one related Country entity
+                .WithMany(countryEntity => countryEntity.Cities) // each Country entity has many related City entities
+                .HasForeignKey(cityEntity => cityEntity.CountryId) // the foreign key property in the City entity that
+                                                                   // references the primary key of the related Country entity
+                .OnDelete(DeleteBehavior.NoAction); // prevents deletion of a Country entity if there are related City entities
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(userRoleEntity => userRoleEntity.User) // each UserRole entity has one related User entity
+                .WithMany(userEntity => userEntity.UserRoles) // each User entity has many related UserRole entities
+                .HasForeignKey(userRoleEntity => userRoleEntity.UserId) // the foreign key property in the UserRole entity that
+                                                                        // references the primary key of the related User entity
+                .OnDelete(DeleteBehavior.NoAction); // prevents deletion of a User entity if there are related UserRole entities
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(userRoleEntity => userRoleEntity.Role) // each UserRole entity has one related Role entity
+                .WithMany(roleEntity => roleEntity.UserRoles) // each Role entity has many related UserRole entities
+                .HasForeignKey(userRoleEntity => userRoleEntity.RoleId) // the foreign key property in the UserRole entity that
+                                                                        // references the primary key of the related Role entity
+                .OnDelete(DeleteBehavior.NoAction); // prevents deletion of a Role entity if there are related UserRole entities
+
+            modelBuilder.Entity<User>()
+                .HasOne(userEntity => userEntity.Country) // each User entity has one related Country entity
+                .WithMany(countryEntity => countryEntity.Users) // each Country entity has many related User entities
+                .HasForeignKey(userEntity => userEntity.CountryId) // the foreign key property in the User entity that
+                                                                   // references the primary key of the related Country entity
+                .OnDelete(DeleteBehavior.NoAction); // prevents deletion of a Country entity if there are related User entities
+
+            modelBuilder.Entity<User>()
+                .HasOne(userEntity => userEntity.City) // each User entity has one related City entity
+                .WithMany(cityEntity => cityEntity.Users) // each City entity has many related User entities
+                .HasForeignKey(userEntity => userEntity.CityId) // the foreign key property in the User entity that
+                                                                // references the primary key of the related City entity
+                .OnDelete(DeleteBehavior.NoAction); // prevents deletion of a City entity if there are related User entities
+
+            modelBuilder.Entity<User>()
+                .HasOne(userEntity => userEntity.Group) // each User entity has one related Group entity
+                .WithMany(groupEntity => groupEntity.Users) // each Group entity has many related User entities
+                .HasForeignKey(userEntity => userEntity.GroupId) // the foreign key property in the User entity that
+                                                                 // references the primary key of the related Group entity
+                .OnDelete(DeleteBehavior.NoAction); // prevents deletion of a Group entity if there are related User entities
+
             
-            modelBuilder.Entity<UserRole>()
-                .HasKey(ur => new { ur.UserId, ur.RoleId });
-
-           
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.User)
-                .WithMany(u => u.UserRoles)
-                .HasForeignKey(ur => ur.UserId);
-
-            modelBuilder.Entity<UserRole>()
-                .HasOne(ur => ur.Role)
-                .WithMany(r => r.UserRoles)
-                .HasForeignKey(ur => ur.RoleId);
-
-          
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Group)
-                .WithMany(g => g.Users)
-                .HasForeignKey(u => u.GroupId);
-
-           
-            modelBuilder.Entity<User>()
-                .Property(u => u.Score)
-                .HasColumnType("decimal(18,2)");
         }
     }
 }
