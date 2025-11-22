@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CORE.APP.Services;
 using APP.Models;
+using System;
+using System.Linq;
 
 // Generated from Custom MVC Template.
 
@@ -12,21 +14,19 @@ namespace MVC.Controllers
         // Service injections:
         private readonly IService<UserRequest, UserResponse> _userService;
         private readonly IService<CityRequest, CityResponse> _cityService;
-        private readonly IService<CountryRequest, CountryResponse> _countryService;
         private readonly IService<GroupRequest, GroupResponse> _groupService;
         private readonly IService<RoleRequest, RoleResponse> _roleService;
+        private const string AllowedCountryName = "Turkey";
 
         public UsersController(
 			IService<UserRequest, UserResponse> userService
             , IService<CityRequest, CityResponse> cityService
-            , IService<CountryRequest, CountryResponse> countryService
             , IService<GroupRequest, GroupResponse> groupService
             , IService<RoleRequest, RoleResponse> roleService
         )
         {
             _userService = userService;
             _cityService = cityService;
-            _countryService = countryService;
             _groupService = groupService;
             _roleService = roleService;
         }
@@ -39,13 +39,13 @@ namespace MVC.Controllers
             */
 
             // Related items service logic to set ViewData (Id and Name parameters may need to be changed in the SelectList constructor according to the model):
-            var cities = _cityService.List() ?? new List<CityResponse>();
-            var countries = _countryService.List() ?? new List<CountryResponse>();
+            var cities = (_cityService.List() ?? new List<CityResponse>())
+                .Where(city => string.Equals(city.Country?.CountryName, AllowedCountryName, StringComparison.OrdinalIgnoreCase))
+                .ToList();
             var groups = _groupService.List() ?? new List<GroupResponse>();
             var roles = _roleService.List() ?? new List<RoleResponse>();
 
             ViewData["CityId"] = new SelectList(cities, "Id", "CityName");
-            ViewData["CountryId"] = new SelectList(countries, "Id", "CountryName");
             ViewData["GroupId"] = new SelectList(groups, "Id", "Title");
             ViewBag.RoleIds = new MultiSelectList(roles, "Id", "Name");
         }

@@ -58,7 +58,7 @@
 						        @Html.DisplayFor(modelItem => item.CityName)
 					        </td>
 					        <td>
-						        @Html.DisplayFor(modelItem => item.Country)
+						        @Html.DisplayFor(modelItem => item.Country.CountryName)
 					        </td>
 					        <td class="text-end w-25">
 						        <a asp-action="Details" asp-route-id="@item.Id">Details</a>&nbsp;|&nbsp;

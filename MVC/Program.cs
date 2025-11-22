@@ -4,8 +4,21 @@ using APP.Services;
 using CORE.APP.Services;
 using CORE.APP.Services.Files.MVC;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var trCulture = new CultureInfo("tr-TR")
+{
+    DateTimeFormat =
+    {
+        ShortDatePattern = "d/M/yyyy",
+        DateSeparator = "/"
+    }
+};
+
+CultureInfo.DefaultThreadCurrentCulture = trCulture;
+CultureInfo.DefaultThreadCurrentUICulture = trCulture;
 
 
 builder.Services.AddDbContext<DbContext, Db>(options => options.UseSqlite(builder.Configuration.GetConnectionString("Db")));

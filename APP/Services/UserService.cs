@@ -4,11 +4,15 @@ using CORE.APP.Models;
 using CORE.APP.Services;
 using CORE.APP.Services.Authentication.MVC;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 
 namespace APP.Services
 {
     public class UserService : Service<User>, IService<UserRequest, UserResponse>
     {
+        private const string AllowedCountryName = "Turkey";
+
         /// <summary>
         /// Service interface for cookie authentication including sign in and sign out methods.
         /// The injected instance in the constructor is assigned to this field to be used in Login and Logout methods below.
@@ -45,12 +49,16 @@ namespace APP.Services
 
         public CommandResponse Create(UserRequest request)
         {
+            var (countryId, countryError) = ResolveCountryFromCity(request.CityId);
+            if (countryError is not null)
+                return Error(countryError);
+
             if (Query().Any(u => u.UserName == request.UserName.Trim() && u.IsActive == request.IsActive))
                 return Error("Active user with the same user name exists!");
             var entity = new User
             {
                 UserName = request.UserName,
-                Password = request.Password,
+                Password = request.Password?.Trim(),
                 FirstName = request.FirstName?.Trim(),
                 LastName = request.LastName?.Trim(),
                 Gender = request.Gender,
@@ -61,8 +69,8 @@ namespace APP.Services
                 Address = request.Address?.Trim(),
                 GroupId = request.GroupId,
                 RoleIds = request.RoleIds,
-                CountryId = request.CountryId,
-                CityId = request.CityId
+                CountryId = countryId,
+                CityId = request.CityId,
             };
             Create(entity);
             return Success("User created successfully.", entity.Id);
@@ -129,8 +137,8 @@ namespace APP.Services
                 IsActiveF = entity.IsActive ? "Active" : "Inactive",
                 FullName = entity.FirstName + " " + entity.LastName,
                 GenderF = entity.Gender.ToString(), // will assign Woman or Man
-                BirthDateF = entity.BirthDate.HasValue ? entity.BirthDate.Value.ToString("MM/dd/yyyy") : string.Empty,
-                RegistrationDateF = entity.RegistrationDate.ToString("MM/dd/yyyy"),
+                BirthDateF = entity.BirthDate.HasValue ? entity.BirthDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                RegistrationDateF = entity.RegistrationDate.ToString("dd/MM/yyyy"),
                 ScoreF = entity.Score.ToString("N1"),
                 Group = entity.Group != null ? entity.Group.Title : null,
                 Roles = entity.UserRoles.Select(ur => ur.Role.Name).ToList(),
@@ -163,8 +171,8 @@ namespace APP.Services
                 IsActiveF = u.IsActive ? "Active" : "Inactive",
                 FullName = u.FirstName + " " + u.LastName,
                 GenderF = u.Gender.ToString(), // will assign Woman or Man
-                BirthDateF = u.BirthDate.HasValue ? u.BirthDate.Value.ToString("MM/dd/yyyy") : string.Empty,
-                RegistrationDateF = u.RegistrationDate.ToString("MM/dd/yyyy"),
+                BirthDateF = u.BirthDate.HasValue ? u.BirthDate.Value.ToString("dd/MM/yyyy") : string.Empty,
+                RegistrationDateF = u.RegistrationDate.ToString("dd/MM/yyyy"),
                 ScoreF = u.Score.ToString("N1"),
                 Group = u.Group != null ? u.Group.Title : null,
                 Roles = u.UserRoles.Select(ur => ur.Role.Name).ToList(),
@@ -175,6 +183,10 @@ namespace APP.Services
 
         public CommandResponse Update(UserRequest request)
         {
+            var (countryId, countryError) = ResolveCountryFromCity(request.CityId);
+            if (countryError is not null)
+                return Error(countryError);
+
             if (Query().Any(u => u.Id != request.Id && u.UserName == request.UserName.Trim() && u.IsActive == request.IsActive))
                 return Error("Active user with the same user name exists!");
             var entity = Query(false).SingleOrDefault(u => u.Id == request.Id); // isNoTracking is false for being tracked by EF Core to update the entity
@@ -182,7 +194,7 @@ namespace APP.Services
                 return Error("User not found!");
             Delete(entity.UserRoles);
             entity.UserName = request.UserName;
-            entity.Password = request.Password;
+            entity.Password = request.Password?.Trim();
             entity.FirstName = request.FirstName?.Trim();
             entity.LastName = request.LastName?.Trim();
             entity.Gender = request.Gender;
@@ -192,10 +204,32 @@ namespace APP.Services
             entity.Address = request.Address?.Trim();
             entity.GroupId = request.GroupId;
             entity.RoleIds = request.RoleIds;
-            entity.CountryId = request.CountryId;
+            entity.CountryId = countryId;
             entity.CityId = request.CityId;
             Update(entity);
             return Success("User updated successfully.", entity.Id);
+        }
+
+        private (int? CountryId, string Error) ResolveCountryFromCity(int? cityId)
+        {
+            if (!cityId.HasValue)
+                return (null, null);
+
+            var cityInfo = Query<City>()
+                .Where(c => c.Id == cityId.Value)
+                .Join(Query<Country>(),
+                    city => city.CountryId,
+                    country => country.Id,
+                    (city, country) => new { city.CountryId, country.CountryName })
+                .SingleOrDefault();
+
+            if (cityInfo is null)
+                return (null, "Selected city could not be found!");
+
+            if (!string.Equals(cityInfo.CountryName, AllowedCountryName, StringComparison.OrdinalIgnoreCase))
+                return (null, $"Selected city must belong to {AllowedCountryName}.");
+
+            return (cityInfo.CountryId, null);
         }
 
 

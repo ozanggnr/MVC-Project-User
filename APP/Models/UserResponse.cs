@@ -1,6 +1,7 @@
 ﻿using APP.Domain;
 using CORE.APP.Models;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace APP.Models
 {
@@ -21,6 +22,7 @@ namespace APP.Models
 
         public DateTime? BirthDate { get; set; }
 
+        [DisplayName("Registration Date")]
         public DateTime RegistrationDate { get; set; }
 
         public decimal Score { get; set; }
@@ -46,9 +48,11 @@ namespace APP.Models
         public string GenderF { get; set; }
 
         [DisplayName("Birth Date")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public string BirthDateF { get; set; }
 
         [DisplayName("Registration Date")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public string RegistrationDateF { get; set; }
 
         [DisplayName("Score")]

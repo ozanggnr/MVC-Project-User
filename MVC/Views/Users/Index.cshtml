@@ -49,16 +49,13 @@
                             @Html.DisplayNameFor(model => model.Password)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.FirstName)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.LastName)
+							@Html.DisplayNameFor(model => model.FullName)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Gender)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.BirthDate)
+                            @Html.DisplayNameFor(model => model.BirthDateF)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.RegistrationDate)
@@ -67,7 +64,7 @@
                             @Html.DisplayNameFor(model => model.Score)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.IsActive)
+                            @Html.DisplayNameFor(model => model.IsActiveF)
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Address)
@@ -94,25 +91,22 @@
 						        @Html.DisplayFor(modelItem => item.Password)
 					        </td>
 					        <td>
-						        @Html.DisplayFor(modelItem => item.FirstName)
-					        </td>
-					        <td>
-						        @Html.DisplayFor(modelItem => item.LastName)
+								@Html.DisplayFor(modelItem => item.FullName)
 					        </td>
 					        <td>
 						        @Html.DisplayFor(modelItem => item.Gender)
 					        </td>
 					        <td>
-						        @Html.DisplayFor(modelItem => item.BirthDate)
+						        @Html.DisplayFor(modelItem => item.BirthDateF)
 					        </td>
 					        <td>
-						        @Html.DisplayFor(modelItem => item.RegistrationDate)
+						        @Html.DisplayFor(modelItem => item.RegistrationDateF)
 					        </td>
 					        <td>
-						        @Html.DisplayFor(modelItem => item.Score)
+						        @Html.DisplayFor(modelItem => item.ScoreF)
 					        </td>
 					        <td>
-						        @Html.DisplayFor(modelItem => item.IsActive)
+						        @Html.DisplayFor(modelItem => item.IsActiveF)
 					        </td>
 					        <td>
 						        @Html.DisplayFor(modelItem => item.Address)

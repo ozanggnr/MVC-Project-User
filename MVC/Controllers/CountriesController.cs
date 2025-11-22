@@ -67,32 +67,6 @@ namespace MVC.Controllers
             return View(item); // return response item as model to the Details view
         }
 
-        // GET: Countries/Create
-        public IActionResult Create()
-        {
-            SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(); // return Create view with no model
-        }
-
-        // POST: Countries/Create
-        [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Create(CountryRequest country)
-        {
-            if (ModelState.IsValid) // check data annotation validation errors in the request
-            {
-                // Insert item service logic:
-                var response = _countryService.Create(country);
-                if (response.IsSuccessful)
-                {
-                    SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
-                    return RedirectToAction(nameof(Details), new { id = response.Id }); // redirect to Details action with id parameter as response.Id route value
-                }
-                ModelState.AddModelError("", response.Message); // to display service error message in the validation summary of the view
-            }
-            SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(country); // return request as model to the Create view
-        }
-
         // GET: Countries/Edit/5
         public IActionResult Edit(int id)
         {
