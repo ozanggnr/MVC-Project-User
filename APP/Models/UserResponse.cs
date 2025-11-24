@@ -48,11 +48,9 @@ namespace APP.Models
         public string GenderF { get; set; }
 
         [DisplayName("Birth Date")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public string BirthDateF { get; set; }
 
         [DisplayName("Registration Date")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public string RegistrationDateF { get; set; }
 
         [DisplayName("Score")]

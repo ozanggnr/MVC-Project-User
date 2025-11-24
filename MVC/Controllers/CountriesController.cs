@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CORE.APP.Services;
 using APP.Models;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 // Generated from Custom MVC Template.
 
@@ -51,21 +52,8 @@ namespace MVC.Controllers
             TempData[key] = message;
         }
 
-        // GET: Countries
-        public IActionResult Index()
-        {
-            // Get collection service logic:
-            var list = _countryService.List();
-            return View(list); // return response collection as model to the Index view
-        }
 
-        // GET: Countries/Details/5
-        public IActionResult Details(int id)
-        {
-            // Get item service logic:
-            var item = _countryService.Item(id);
-            return View(item); // return response item as model to the Details view
-        }
+     
 
         // GET: Countries/Edit/5
         public IActionResult Edit(int id)
@@ -110,7 +98,7 @@ namespace MVC.Controllers
             // Delete item service logic:
             var response = _countryService.Delete(id);
             SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
-            return RedirectToAction(nameof(Index)); // redirect to the Index action
+            return RedirectToAction(nameof(System.Index)); // redirect to the Index action
         }
     }
 }

@@ -27,8 +27,6 @@ namespace APP.Models
         public Genders Gender { get; set; }
 
         [DisplayName("Birth Date")]
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? BirthDate { get; set; }
 
         // We don't need to get the RegistrationDate from the client since it will be assigned automatically in the service.
