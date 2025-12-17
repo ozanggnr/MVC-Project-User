@@ -59,9 +59,44 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Roles" asp-action="Index">Roles</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="UserCarts" asp-action="Index">User Cart</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-text">
+                    <ul class="navbar-nav me-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+
+                                @* Way 1: *@
+                                @* <span>@User.Identity.Name</span> *@
+                                @* Way 2: optional link to direct the user to his/her user details *@
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Details"
+                                   asp-route-id="@User.Claims.SingleOrDefault(claim => claim.Type == "Id")?.Value">
+                                    @* Getting the user's Id from the claims to direct to user to the user details with id route value *@
+                                    @User.Identity.Name
+                                </a>
+
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Logout">Logout</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Register">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Login">Login</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

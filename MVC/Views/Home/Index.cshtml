@@ -19,8 +19,15 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to @configuration["Title"]</h1>
-    @* Changed from <h1 class="display-4">Welcome to Products MVC</h1> to use Title in appsettings.json *@
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h1 class="display-4">Welcome to @configuration["Title"]</h1>
+        <h1>@User.Identity.Name</h1>
+    }
+    else
+    {
+        <h1 class="display-4">Welcome to @configuration["Title"]</h1>
+    }
 </div>
 
 @* Added to show App section's Version and Date values in appsettings.json: *@

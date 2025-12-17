@@ -24,7 +24,7 @@ namespace APP.Models
 
         [DisplayName("Registration Date")]
         public DateTime RegistrationDate { get; set; }
-
+        
         public decimal Score { get; set; }
 
         public bool IsActive { get; set; }

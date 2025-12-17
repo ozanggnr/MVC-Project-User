@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using APP.Models;
 using CORE.APP.Services;
-using APP.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 // Generated from Custom MVC Template.
 
@@ -51,6 +52,7 @@ namespace MVC.Controllers
         }
 
         // GET: Groups
+        [AllowAnonymous]
         public IActionResult Index()
         {
             // Get collection service logic:
@@ -59,6 +61,7 @@ namespace MVC.Controllers
         }
 
         // GET: Groups/Details/5
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             // Get item service logic:
@@ -67,6 +70,7 @@ namespace MVC.Controllers
         }
 
         // GET: Groups/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
@@ -75,6 +79,7 @@ namespace MVC.Controllers
 
         // POST: Groups/Create
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(GroupRequest @group)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
@@ -93,6 +98,7 @@ namespace MVC.Controllers
         }
 
         // GET: Groups/Edit/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             // Get item to edit service logic:
@@ -103,6 +109,7 @@ namespace MVC.Controllers
 
         // POST: Groups/Edit
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(GroupRequest @group)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
@@ -121,6 +128,7 @@ namespace MVC.Controllers
         }
 
         // GET: Groups/Delete/5
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             // Get item to delete service logic:
@@ -130,6 +138,7 @@ namespace MVC.Controllers
 
         // POST: Groups/Delete
         [HttpPost, ValidateAntiForgeryToken, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteConfirmed(int id)
         {
             // Delete item service logic:

@@ -51,36 +51,20 @@ namespace MVC.Controllers
 
             TempData[key] = message;
         }
-
-
-     
-
-        // GET: Countries/Edit/5
-        public IActionResult Edit(int id)
+        // GET: Countries
+        public IActionResult Index()
         {
-            // Get item to edit service logic:
-            var item = _countryService.Edit(id);
-            SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(item); // return request as model to the Edit view
+            // Get collection service logic:
+            var list = _countryService.List();
+            return View(list); // return response collection as model to the Index view
         }
 
-        // POST: Countries/Edit
-        [HttpPost, ValidateAntiForgeryToken]
-        public IActionResult Edit(CountryRequest country)
+        // GET: Countries/Details/5
+        public IActionResult Details(int id)
         {
-            if (ModelState.IsValid) // check data annotation validation errors in the request
-            {
-                // Update item service logic:
-                var response = _countryService.Update(country);
-                if (response.IsSuccessful)
-                {
-                    SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
-                    return RedirectToAction(nameof(Details), new { id = response.Id }); // redirect to Details action with id parameter as response.Id route value
-                }
-                ModelState.AddModelError("", response.Message); // to display service error message in the validation summary of the view
-            }
-            SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
-            return View(country); // return request as model to the Edit view
+            // Get item service logic:
+            var item = _countryService.Item(id);
+            return View(item); // return response item as model to the Details view
         }
 
         // GET: Countries/Delete/5
@@ -98,7 +82,7 @@ namespace MVC.Controllers
             // Delete item service logic:
             var response = _countryService.Delete(id);
             SetTempData(response.Message); // set TempData dictionary to carry the message to the redirected action's view
-            return RedirectToAction(nameof(System.Index)); // redirect to the Index action
+            return RedirectToAction(nameof(Index)); // redirect to the Index action
         }
     }
 }

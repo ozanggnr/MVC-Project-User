@@ -17,7 +17,7 @@ namespace APP.Services
         /// Service interface for cookie authentication including sign in and sign out methods.
         /// The injected instance in the constructor is assigned to this field to be used in Login and Logout methods below.
         /// </summary>
-        private readonly ICookieAuthService? _cookieAuthService;
+        private readonly ICookieAuthService _cookieAuthService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserService"/> class.
@@ -29,7 +29,7 @@ namespace APP.Services
         /// <param name="cookieAuthService">
         /// The optional <see cref="ICookieAuthService"/> instance used for cookie authentication, which the injection is managed in the IoC Container of Program.cs.
         /// </param>
-        public UserService(DbContext db, ICookieAuthService? cookieAuthService = null) : base(db)
+        public UserService(DbContext db, ICookieAuthService cookieAuthService = null) : base(db)
         {
             // The injected cookie authentication service is assigned to this field to be used in Login and Logout methods below.
             _cookieAuthService = cookieAuthService;
@@ -136,10 +136,10 @@ namespace APP.Services
 
                 IsActiveF = entity.IsActive ? "Active" : "Inactive",
                 FullName = entity.FirstName + " " + entity.LastName,
-                GenderF = entity.Gender.ToString(), // will assign Woman or Man
+                GenderF = entity.Gender.ToString(), 
                 BirthDateF = entity.BirthDate.HasValue ? entity.BirthDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                 RegistrationDateF = entity.RegistrationDate.ToString("dd/MM/yyyy"),
-                ScoreF = entity.Score.ToString("N1"),
+                ScoreF = entity.Score.ToString("N2"),
                 Group = entity.Group != null ? entity.Group.Title : null,
                 Roles = entity.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 Country = entity.Country != null ? entity.Country.CountryName : string.Empty,
@@ -173,7 +173,7 @@ namespace APP.Services
                 GenderF = u.Gender.ToString(), // will assign Woman or Man
                 BirthDateF = u.BirthDate.HasValue ? u.BirthDate.Value.ToString("dd/MM/yyyy") : string.Empty,
                 RegistrationDateF = u.RegistrationDate.ToString("dd/MM/yyyy"),
-                ScoreF = u.Score.ToString("N1"),
+                ScoreF = u.Score.ToString("N2"),
                 Group = u.Group != null ? u.Group.Title : null,
                 Roles = u.UserRoles.Select(ur => ur.Role.Name).ToList(),
                 Country = u.Country != null ? u.Country.CountryName : string.Empty,

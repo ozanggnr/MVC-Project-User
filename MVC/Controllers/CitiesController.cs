@@ -1,4 +1,5 @@
 ﻿#nullable disable
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CORE.APP.Services;
@@ -54,6 +55,7 @@ namespace MVC.Controllers
         }
 
         // GET: Cities
+        [AllowAnonymous]
         public IActionResult Index()
         {
             // Get collection service logic:
@@ -62,6 +64,7 @@ namespace MVC.Controllers
         }
 
         // GET: Cities/Details/5
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             // Get item service logic:
@@ -70,6 +73,7 @@ namespace MVC.Controllers
         }
 
         // GET: Cities/Create
+        [Authorize]
         public IActionResult Create()
         {
             SetViewData(); // set ViewData dictionary to carry extra data other than the model to the view
@@ -78,6 +82,7 @@ namespace MVC.Controllers
 
         // POST: Cities/Create
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Create(CityRequest city)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
@@ -96,6 +101,7 @@ namespace MVC.Controllers
         }
 
         // GET: Cities/Edit/5
+        [Authorize]
         public IActionResult Edit(int id)
         {
             // Get item to edit service logic:
@@ -106,6 +112,7 @@ namespace MVC.Controllers
 
         // POST: Cities/Edit
         [HttpPost, ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Edit(CityRequest city)
         {
             if (ModelState.IsValid) // check data annotation validation errors in the request
@@ -124,6 +131,7 @@ namespace MVC.Controllers
         }
 
         // GET: Cities/Delete/5
+        [Authorize]
         public IActionResult Delete(int id)
         {
             // Get item to delete service logic:
@@ -133,6 +141,7 @@ namespace MVC.Controllers
 
         // POST: Cities/Delete
         [HttpPost, ValidateAntiForgeryToken, ActionName("Delete")]
+        [Authorize]
         public IActionResult DeleteConfirmed(int id)
         {
             // Delete item service logic:
